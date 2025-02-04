@@ -90,8 +90,8 @@ if (!token) {
 // };
 
 const bot = new Telegraf(token);
-let chatId: string | null = null;
-let threadId: number | null = null;
+let chatId: number | null = Number(process.env.SPROUT_TOKEN_CHAT_ID);
+let threadId: number | null = Number(process.env.SPROUT_TOKEN_THREAD_ID);
 // let authAccessToken: string;
 const usedTokenInsightIds: string[] = [];
 
@@ -101,7 +101,7 @@ export const plantTelegramAgentInit = async () => {
   // authAccessToken = await azureLogin();
 
   const postTokenInsights = async () => {
-    if (!chatId || !threadId) {
+    if (chatId === null || threadId === null) {
       return;
     }
 
@@ -130,8 +130,8 @@ export const plantTelegramAgentInit = async () => {
 
     console.log(newInsight);
 
-    bot.telegram.sendMessage(chatId as string, newInsight.tweetText, {
-      message_thread_id: threadId as number,
+    bot.telegram.sendMessage(chatId, newInsight.tweetText, {
+      message_thread_id: threadId,
     });
   };
 
@@ -140,22 +140,23 @@ export const plantTelegramAgentInit = async () => {
     await postTokenInsights();
   }, 1000 * 60); // every minute
 
-  bot.on(message("text"), async (ctx) => {
-    try {
-      const newChatId = ctx.chat.id.toString();
-      const newThreadId = ctx.message?.message_thread_id as number;
+  // TODO: Need below code to get chat id and thread id
+  // bot.on(message("text"), async (ctx) => {
+  //   try {
+  //     const newChatId = ctx.chat.id;
+  //     const newThreadId = ctx.message?.message_thread_id as number;
 
-      if (!chatId && !threadId && newThreadId && newChatId) {
-        console.log(`Chat ID: ${chatId}`);
-        console.log(`Thread ID: ${threadId}`);
+  //     if (!chatId && !threadId && newThreadId && newChatId) {
+  //       console.log(`Chat ID: ${chatId}`);
+  //       console.log(`Thread ID: ${threadId}`);
 
-        chatId = newChatId;
-        threadId = newThreadId;
+  //       chatId = newChatId;
+  //       threadId = newThreadId;
 
-        await postTokenInsights();
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  });
+  //       await postTokenInsights();
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // });
 };
