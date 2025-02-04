@@ -23,7 +23,7 @@ sequelize.sync().then(() => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Matrix agent backend is running.");
+  res.send("Sprouting token microservice is running.");
 });
 
 io.on("connection", (socket) => {
