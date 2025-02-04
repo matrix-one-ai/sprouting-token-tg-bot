@@ -1,0 +1,38 @@
+{
+  "name": "matrix-agent-backend",
+  "version": "1.0.0",
+  "description": "Node.js backend agent runtime.",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "start": "node dist/bundle.js",
+    "dev": "npx ts-node src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.7.2",
+    "webpack": "^5.96.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "@ai-sdk/azure": "^1.0.7",
+    "@ai-sdk/openai": "^1.0.8",
+    "@vercel/blob": "^0.26.0",
+    "agent-twitter-client": "^0.0.16",
+    "ai": "^4.0.9",
+    "csv-parser": "^3.0.0",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "moralis": "^2.27.2",
+    "sequelize": "^6.37.5",
+    "socket.io": "^4.8.1",
+    "sqlite3": "^5.1.7",
+    "telegraf": "^4.16.3",
+    "twitter-api-v2": "^1.18.2"
+  }
+}
