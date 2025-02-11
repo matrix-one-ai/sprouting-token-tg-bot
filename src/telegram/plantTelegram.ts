@@ -95,45 +95,49 @@ let threadId: number | null = Number(process.env.SPROUT_TOKEN_THREAD_ID);
 // let authAccessToken: string;
 const usedTokenInsightIds: string[] = [];
 
+// authAccessToken = await azureLogin();
+
+export const sendBotMessage = (message: string) => {
+  if (chatId === null) {
+    return;
+  }
+
+  bot.telegram.sendMessage(chatId, message, {
+    message_thread_id: threadId,
+  });
+};
+
+const postTokenInsights = async () => {
+  const tokenInsightsResp = await fetch(
+    "https://sami-one-portal-be.azurewebsites.net/api/services/app/DataManagement/GetLatestRaydiumTweets",
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // Authorization: `Bearer ${authAccessToken}`,
+        "X-Api-Key": "matrix-5dd9ae979c7d440e9e5602b25e08f65d",
+        cache: "no-cache",
+      },
+    },
+  );
+  const tokenInsights = await tokenInsightsResp.json();
+
+  const newInsight = (tokenInsights?.result as TokenInsight[])?.[0];
+
+  if (!newInsight || usedTokenInsightIds.includes(newInsight.id)) {
+    console.log("No new token insights");
+    return;
+  }
+
+  usedTokenInsightIds.push(newInsight.id);
+
+  console.info(newInsight);
+
+  sendBotMessage(newInsight.tweetText);
+};
+
 export const plantTelegramAgentInit = async () => {
   bot.launch();
-
-  // authAccessToken = await azureLogin();
-
-  const postTokenInsights = async () => {
-    if (chatId === null || threadId === null) {
-      return;
-    }
-
-    const tokenInsightsResp = await fetch(
-      "https://sami-one-portal-be.azurewebsites.net/api/services/app/DataManagement/GetLatestRaydiumTweets",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          // Authorization: `Bearer ${authAccessToken}`,
-          "X-Api-Key": "matrix-5dd9ae979c7d440e9e5602b25e08f65d",
-          cache: "no-cache",
-        },
-      },
-    );
-    const tokenInsights = await tokenInsightsResp.json();
-
-    const newInsight = (tokenInsights?.result as TokenInsight[])?.[0];
-
-    if (!newInsight || usedTokenInsightIds.includes(newInsight.id)) {
-      console.log("No new token insights");
-      return;
-    }
-
-    usedTokenInsightIds.push(newInsight.id);
-
-    console.log(newInsight);
-
-    bot.telegram.sendMessage(chatId, newInsight.tweetText, {
-      message_thread_id: threadId,
-    });
-  };
 
   // Send a message every hour
   setInterval(async () => {
